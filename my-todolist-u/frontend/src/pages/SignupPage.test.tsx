@@ -60,7 +60,8 @@ describe('SignupPage', () => {
     const emailInput = screen.getByLabelText('이메일')
     fireEvent.change(emailInput, { target: { value: 'invalid' } })
     fireEvent.blur(emailInput)
-    expect(screen.getByText('올바른 이메일 형식이 아닙니다.')).toBeInTheDocument()
+    // Expect the inline error message below the input
+    expect(emailInput.nextElementSibling).toHaveTextContent('올바른 이메일 형식이 아닙니다.')
   })
 
   it('비밀번호가 규칙에 맞지 않으면 블러 시 에러가 표시된다', () => {
@@ -123,7 +124,8 @@ describe('SignupPage', () => {
     fireEvent.submit(screen.getByRole('button', { name: '가입하기' }).closest('form')!)
 
     await waitFor(() => {
-      expect(screen.getByText('이미 사용 중인 이메일입니다.')).toBeInTheDocument()
+      // Expect the API error banner to show the message
+      expect(screen.getByRole('alert')).toHaveTextContent('이미 사용 중인 이메일입니다.')
     })
   })
 

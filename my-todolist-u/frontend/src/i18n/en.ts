@@ -11,6 +11,7 @@ const en: Record<TranslationKeys, string> = {
   emailInvalid: 'Invalid email format.',
 
   loginTitle: 'Login',
+  loginSubtitle: 'Sign in to review today\'s schedule, deadlines, and priorities in one place.',
   loginButton: 'Login',
   loginLoading: 'Logging in...',
   loginFailed: 'Login failed.',
@@ -18,6 +19,7 @@ const en: Record<TranslationKeys, string> = {
   signupLink: 'Sign up',
 
   signupTitle: 'Sign Up',
+  signupSubtitle: 'Create your account and start organizing classes, assignments, and personal plans.',
   signupButton: 'Create Account',
   signupLoading: 'Processing...',
   signupFailed: 'Sign up failed.',
@@ -81,6 +83,17 @@ const en: Record<TranslationKeys, string> = {
   error403: 'Access denied.',
   error404: 'Not found.',
   error500: 'Server error.',
+
+  loginPromoTitle: 'Keep every lecture, deadline, and team task in one rhythm.',
+  loginPromoText: 'Open your planner to see what needs attention today, what is approaching, and what can wait until later.',
+  signupPromoTitle: 'Build a calmer routine for classes, assignments, and weekly planning.',
+  signupPromoText: 'Set up your account once, then manage overdue work, upcoming tasks, and personal routines from a single workspace.',
+  feature1: 'Deadline-first planning that surfaces urgent work fast',
+  feature2: 'One board for classes, meetings, and personal routines',
+  feature3: 'Mobile-friendly flow for quick updates between classes',
+  testAccountInfoTitle: 'Try the demo accounts before using your own data',
+  testAccountEmail: 'Email',
+  testAccountPassword: 'Password',
 }
 
 export default en

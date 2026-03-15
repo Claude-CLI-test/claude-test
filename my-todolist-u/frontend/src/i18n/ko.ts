@@ -9,6 +9,7 @@ const ko = {
   emailInvalid: '올바른 이메일 형식이 아닙니다.',
 
   loginTitle: '로그인',
+  loginSubtitle: '오늘 일정, 마감, 우선순위를 한 화면에서 확인하려면 로그인하세요.',
   loginButton: '로그인',
   loginLoading: '로그인 중...',
   loginFailed: '로그인에 실패했습니다.',
@@ -16,6 +17,7 @@ const ko = {
   signupLink: '회원가입',
 
   signupTitle: '회원가입',
+  signupSubtitle: '수업, 과제, 팀 일정, 개인 루틴을 정리할 계정을 바로 만들어보세요.',
   signupButton: '가입하기',
   signupLoading: '처리 중...',
   signupFailed: '회원가입에 실패했습니다.',
@@ -79,6 +81,17 @@ const ko = {
   error403: '접근 권한이 없습니다.',
   error404: '찾을 수 없습니다.',
   error500: '서버 오류가 발생했습니다.',
+
+  loginPromoTitle: '수업, 마감, 팀 할 일을 한 흐름으로 정리하세요.',
+  loginPromoText: '오늘 바로 처리할 일과 곧 다가오는 일정, 조금 뒤로 미뤄도 되는 일을 한 화면에서 안정적으로 관리할 수 있습니다.',
+  signupPromoTitle: '학생 일정 관리를 더 차분하고 선명하게 시작하세요.',
+  signupPromoText: '가입 후에는 과제, 회의, 개인 루틴을 하나의 워크스페이스에서 관리하고 모바일에서도 빠르게 업데이트할 수 있습니다.',
+  feature1: '급한 마감을 먼저 보여주는 일정 중심 정리',
+  feature2: '수업, 팀 일정, 개인 루틴을 한 보드에서 관리',
+  feature3: '이동 중에도 바로 수정할 수 있는 모바일 흐름',
+  testAccountInfoTitle: '내 데이터 입력 전 바로 써볼 수 있는 테스트 계정',
+  testAccountEmail: '이메일',
+  testAccountPassword: '비밀번호',
 } as const
 
 export default ko

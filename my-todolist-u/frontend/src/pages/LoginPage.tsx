@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useI18n } from '../contexts/I18nContext'
 import { ApiRequestError } from '../api/client'
-import styles from './LoginPage.module.css'
+import AuthLayout from '../components/AuthLayout'
 
 export default function LoginPage() {
   const { login } = useAuth()
-  const { t, locale, setLocale } = useI18n()
+  const { t } = useI18n()
   const navigate = useNavigate()
 
   const [email, setEmail] = useState('')
@@ -54,88 +54,86 @@ export default function LoginPage() {
   }
 
   return (
-    <div className={styles.pageWrapper}>
-      <header className={styles.header}>
-        <h1 className={styles.headerTitle}>{t('appTitle')}</h1>
-        <p className={styles.headerSubtitle}>{t('appSubtitle')}</p>
-        <div className={styles.langToggle}>
-          <button
-            type="button"
-            className={`${styles.langToggleBtn}${locale === 'ko' ? ` ${styles.langToggleBtnActive}` : ''}`}
-            onClick={() => setLocale('ko')}
+    <AuthLayout variant="login" title={t('loginTitle')} subtitle={t('loginSubtitle')}>
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+        {apiError && (
+          <div
+            className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+            role="alert"
           >
-            KO
-          </button>
-          <button
-            type="button"
-            className={`${styles.langToggleBtn}${locale === 'en' ? ` ${styles.langToggleBtnActive}` : ''}`}
-            onClick={() => setLocale('en')}
-          >
-            EN
-          </button>
-        </div>
-      </header>
+            {apiError}
+          </div>
+        )}
 
-      <main className={styles.content}>
-        <div className={styles.card}>
-          <h2 className={styles.cardTitle}>{t('loginTitle')}</h2>
-
-          {apiError && (
-            <div className={styles.errorBanner} role="alert">
-              ✗ {apiError}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} noValidate>
-            <div className={styles.fieldGroup}>
-              <div className={styles.field}>
-                <label htmlFor="email" className={styles.label}>{t('emailLabel')}</label>
-                <input
-                  id="email"
-                  type="email"
-                  className={`${styles.input}${emailError ? ` ${styles.inputError}` : ''}`}
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value)
-                    if (emailError) setEmailError(validateEmail(e.target.value))
-                  }}
-                  onBlur={handleEmailBlur}
-                  placeholder="example2@email.com"
-                  autoComplete="email"
-                  disabled={isSubmitting}
-                />
-                {emailError && <span className={styles.fieldError}>{emailError}</span>}
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="password" className={styles.label}>{t('passwordLabel')}</label>
-                <input
-                  id="password"
-                  type="password"
-                  className={styles.input}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  autoComplete="current-password"
-                  disabled={isSubmitting}
-                />
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className={styles.submitButton}
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+            {t('emailLabel')}
+          </label>
+          <div className="mt-1">
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              className={`block w-full rounded-2xl border bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-100 ${
+                emailError ? 'border-red-400 bg-red-50/70' : 'border-slate-200'
+              }`}
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                if (emailError) setEmailError(validateEmail(e.target.value))
+              }}
+              onBlur={handleEmailBlur}
+              placeholder="alice@example.com"
               disabled={isSubmitting}
-            >
-              {isSubmitting ? t('loginLoading') : t('loginButton')}
-            </button>
-          </form>
+            />
+            {emailError && <p className="mt-2 text-sm text-red-600">{emailError}</p>}
+          </div>
+        </div>
 
-          <p className={styles.footer}>
-            {t('noAccount')}
-            <Link to="/signup">{t('signupLink')}</Link>
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+            {t('passwordLabel')}
+          </label>
+          <div className="mt-1">
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              className="block w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-100"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={isSubmitting}
+            />
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <button
+            type="submit"
+            className="flex min-h-[48px] w-full items-center justify-center rounded-2xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(244,81,30,0.24)] transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? t('loginLoading') : t('loginButton')}
+          </button>
+
+          <p className="rounded-2xl border border-brand-100 bg-brand-50/70 px-4 py-3 text-xs leading-5 text-slate-600">
+            {t('testAccountInfoTitle')}: <strong className="text-slate-900">alice@example.com</strong> /
+            {' '}
+            <strong className="text-slate-900">Password1!</strong>
           </p>
         </div>
-      </main>
-    </div>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-slate-600">
+        {t('noAccount')}{' '}
+        <Link to="/signup" className="font-semibold text-brand-600 transition hover:text-brand-700">
+          {t('signupLink')}
+        </Link>
+      </p>
+    </AuthLayout>
   )
 }

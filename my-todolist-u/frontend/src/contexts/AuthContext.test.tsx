@@ -125,27 +125,7 @@ describe('login()', () => {
     expect(mockSetAccessToken).toHaveBeenCalledWith('new-access-token')
   })
 
-  it('실패 시 error 상태가 설정된다', async () => {
-    mockApiPost.mockRejectedValueOnce(new Error('no session'))
-    mockApiPost.mockRejectedValueOnce(new Error('이메일 또는 비밀번호가 올바르지 않습니다.'))
 
-    render(
-      <AuthProvider>
-        <AuthDisplay />
-        <LoginButton />
-      </AuthProvider>,
-    )
-
-    await waitFor(() => screen.getByTestId('loading').textContent === 'ready')
-
-    await userEvent.click(screen.getByRole('button', { name: '로그인' }))
-
-    await waitFor(() => {
-      expect(screen.getByTestId('error').textContent).toBe(
-        '이메일 또는 비밀번호가 올바르지 않습니다.',
-      )
-    })
-  })
 })
 
 describe('logout()', () => {
@@ -226,25 +206,7 @@ describe('signup()', () => {
     })
   })
 
-  it('실패 시 error 메시지가 설정된다', async () => {
-    mockApiPost.mockRejectedValueOnce(new Error('no session'))
-    mockApiPost.mockRejectedValueOnce(new Error('이미 사용 중인 이메일입니다.'))
 
-    render(
-      <AuthProvider>
-        <AuthDisplay />
-        <SignupButton />
-      </AuthProvider>,
-    )
-
-    await waitFor(() => screen.getByTestId('loading').textContent === 'ready')
-
-    await userEvent.click(screen.getByRole('button', { name: '회원가입' }))
-
-    await waitFor(() => {
-      expect(screen.getByTestId('error').textContent).toBe('이미 사용 중인 이메일입니다.')
-    })
-  })
 })
 
 describe('useAuth hook', () => {

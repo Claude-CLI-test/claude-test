@@ -3,11 +3,11 @@ import { Link, useNavigate } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 import { useI18n } from '../contexts/I18nContext'
 import { ApiRequestError } from '../api/client'
-import styles from './LoginPage.module.css'
+import AuthLayout from '../components/AuthLayout'
 
 export default function SignupPage() {
   const { signup, login } = useAuth()
-  const { t, locale, setLocale } = useI18n()
+  const { t } = useI18n()
   const navigate = useNavigate()
 
   const [name, setName] = useState('')
@@ -19,6 +19,7 @@ export default function SignupPage() {
   const [emailError, setEmailError] = useState('')
   const [passwordError, setPasswordError] = useState('')
   const [passwordConfirmError, setPasswordConfirmError] = useState('')
+  const [apiError, setApiError] = useState('')
 
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -46,6 +47,7 @@ export default function SignupPage() {
     setEmailError(emailErr)
     setPasswordError(passwordErr)
     setPasswordConfirmError(confirmErr)
+    setApiError('')
 
     if (nameErr || emailErr || passwordErr || confirmErr) return
 
@@ -55,12 +57,10 @@ export default function SignupPage() {
       await login(email, password)
       navigate('/', { replace: true })
     } catch (err) {
-      if (err instanceof ApiRequestError && err.statusCode === 400) {
-        setEmailError(err.message)
-      } else if (err instanceof ApiRequestError) {
-        setEmailError(err.message)
+      if (err instanceof ApiRequestError) {
+        setApiError(err.message)
       } else {
-        setEmailError(t('signupFailed'))
+        setApiError(t('signupFailed'))
       }
     } finally {
       setIsSubmitting(false)
@@ -68,130 +68,149 @@ export default function SignupPage() {
   }
 
   return (
-    <div className={styles.pageWrapper}>
-      <header className={styles.header}>
-        <h1 className={styles.headerTitle}>{t('appTitle')}</h1>
-        <p className={styles.headerSubtitle}>{t('appSubtitle')}</p>
-        <div className={styles.langToggle}>
-          <button
-            type="button"
-            className={`${styles.langToggleBtn}${locale === 'ko' ? ` ${styles.langToggleBtnActive}` : ''}`}
-            onClick={() => setLocale('ko')}
+    <AuthLayout variant="signup" title={t('signupTitle')} subtitle={t('signupSubtitle')}>
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+        {apiError && (
+          <div
+            className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700"
+            role="alert"
           >
-            KO
-          </button>
-          <button
-            type="button"
-            className={`${styles.langToggleBtn}${locale === 'en' ? ` ${styles.langToggleBtnActive}` : ''}`}
-            onClick={() => setLocale('en')}
-          >
-            EN
-          </button>
-        </div>
-      </header>
+            {apiError}
+          </div>
+        )}
 
-      <main className={styles.content}>
-        <div className={styles.card}>
-          <h2 className={styles.cardTitle}>{t('signupTitle')}</h2>
-
-          <form onSubmit={handleSubmit} noValidate>
-            <div className={styles.fieldGroup}>
-              <div className={styles.field}>
-                <label htmlFor="name" className={styles.label}>{t('nameLabel')}</label>
-                <input
-                  id="name"
-                  type="text"
-                  className={`${styles.input}${nameError ? ` ${styles.inputError}` : ''}`}
-                  value={name}
-                  onChange={(e) => {
-                    setName(e.target.value)
-                    if (nameError && e.target.value.trim()) setNameError('')
-                  }}
-                  placeholder={t('namePlaceholder')}
-                  autoComplete="name"
-                  disabled={isSubmitting}
-                />
-                {nameError && <span className={styles.fieldError}>{nameError}</span>}
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="email" className={styles.label}>{t('emailLabel')}</label>
-                <input
-                  id="email"
-                  type="email"
-                  className={`${styles.input}${emailError ? ` ${styles.inputError}` : ''}`}
-                  value={email}
-                  onChange={(e) => {
-                    setEmail(e.target.value)
-                    if (emailError) setEmailError(validateEmail(e.target.value))
-                  }}
-                  onBlur={() => setEmailError(validateEmail(email))}
-                  placeholder="example@email.com"
-                  autoComplete="email"
-                  disabled={isSubmitting}
-                />
-                {emailError && <span className={styles.fieldError}>{emailError}</span>}
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="password" className={styles.label}>{t('passwordLabel')}</label>
-                <input
-                  id="password"
-                  type="password"
-                  className={`${styles.input}${passwordError ? ` ${styles.inputError}` : ''}`}
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value)
-                    if (passwordError) setPasswordError(validatePassword(e.target.value))
-                  }}
-                  onBlur={() => setPasswordError(validatePassword(password))}
-                  autoComplete="new-password"
-                  disabled={isSubmitting}
-                />
-                <span className={styles.fieldHint}>{t('passwordHint')}</span>
-                {passwordError && <span className={styles.fieldError}>{passwordError}</span>}
-              </div>
-
-              <div className={styles.field}>
-                <label htmlFor="passwordConfirm" className={styles.label}>{t('passwordConfirmLabel')}</label>
-                <input
-                  id="passwordConfirm"
-                  type="password"
-                  className={`${styles.input}${passwordConfirmError ? ` ${styles.inputError}` : ''}`}
-                  value={passwordConfirm}
-                  onChange={(e) => {
-                    setPasswordConfirm(e.target.value)
-                    if (passwordConfirmError && e.target.value === password)
-                      setPasswordConfirmError('')
-                  }}
-                  onBlur={() => {
-                    if (passwordConfirm && passwordConfirm !== password)
-                      setPasswordConfirmError(t('passwordMismatch'))
-                  }}
-                  autoComplete="new-password"
-                  disabled={isSubmitting}
-                />
-                {passwordConfirmError && (
-                  <span className={styles.fieldError}>{passwordConfirmError}</span>
-                )}
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className={styles.submitButton}
+        <div>
+          <label htmlFor="name" className="block text-sm font-medium text-slate-700">
+            {t('nameLabel')}
+          </label>
+          <div className="mt-1">
+            <input
+              id="name"
+              name="name"
+              type="text"
+              autoComplete="name"
+              required
+              className={`block w-full rounded-2xl border bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-100 ${
+                nameError ? 'border-red-400 bg-red-50/70' : 'border-slate-200'
+              }`}
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value)
+                if (nameError && e.target.value.trim()) setNameError('')
+              }}
+              placeholder={t('namePlaceholder')}
               disabled={isSubmitting}
-            >
-              {isSubmitting ? t('signupLoading') : t('signupButton')}
-            </button>
-          </form>
+            />
+            {nameError && <p className="mt-2 text-sm text-red-600">{nameError}</p>}
+          </div>
+        </div>
 
-          <p className={styles.footer}>
-            {t('hasAccount')}
-            <Link to="/login">{t('loginLink')}</Link>
+        <div>
+          <label htmlFor="email" className="block text-sm font-medium text-slate-700">
+            {t('emailLabel')}
+          </label>
+          <div className="mt-1">
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              className={`block w-full rounded-2xl border bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-100 ${
+                emailError ? 'border-red-400 bg-red-50/70' : 'border-slate-200'
+              }`}
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value)
+                if (emailError) setEmailError(validateEmail(e.target.value))
+                if (apiError) setApiError('')
+              }}
+              onBlur={() => setEmailError(validateEmail(email))}
+              placeholder="alice@example.com"
+              disabled={isSubmitting}
+            />
+            {emailError && <p className="mt-2 text-sm text-red-600">{emailError}</p>}
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-slate-700">
+            {t('passwordLabel')}
+          </label>
+          <div className="mt-1">
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="new-password"
+              required
+              className={`block w-full rounded-2xl border bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-100 ${
+                passwordError ? 'border-red-400 bg-red-50/70' : 'border-slate-200'
+              }`}
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value)
+                if (passwordError) setPasswordError(validatePassword(e.target.value))
+              }}
+              onBlur={() => setPasswordError(validatePassword(password))}
+              disabled={isSubmitting}
+            />
+            <p className="mt-2 text-sm text-gray-500">{t('passwordHint')}</p>
+            {passwordError && <p className="mt-2 text-sm text-red-600">{passwordError}</p>}
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="passwordConfirm" className="block text-sm font-medium text-slate-700">
+            {t('passwordConfirmLabel')}
+          </label>
+          <div className="mt-1">
+            <input
+              id="passwordConfirm"
+              name="passwordConfirm"
+              type="password"
+              autoComplete="new-password"
+              required
+              className={`block w-full rounded-2xl border bg-white px-4 py-3 text-sm text-slate-900 shadow-sm outline-none transition placeholder:text-slate-400 focus:border-brand-500 focus:ring-4 focus:ring-brand-100 ${
+                passwordConfirmError ? 'border-red-400 bg-red-50/70' : 'border-slate-200'
+              }`}
+              value={passwordConfirm}
+              onChange={(e) => {
+                setPasswordConfirm(e.target.value)
+                if (passwordConfirmError && e.target.value === password)
+                  setPasswordConfirmError('')
+              }}
+              onBlur={() => {
+                if (passwordConfirm && passwordConfirm !== password)
+                  setPasswordConfirmError(t('passwordMismatch'))
+              }}
+              disabled={isSubmitting}
+            />
+            {passwordConfirmError && <p className="mt-2 text-sm text-red-600">{passwordConfirmError}</p>}
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          <button
+            type="submit"
+            className="flex min-h-[48px] w-full items-center justify-center rounded-2xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-[0_18px_35px_rgba(244,81,30,0.24)] transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:shadow-none"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? t('signupLoading') : t('signupButton')}
+          </button>
+
+          <p className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs leading-5 text-slate-600">
+            대소문자와 숫자를 섞어 두면 더 안전하게 사용할 수 있습니다.
           </p>
         </div>
-      </main>
-    </div>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-slate-600">
+        {t('hasAccount')}{' '}
+        <Link to="/login" className="font-semibold text-brand-600 transition hover:text-brand-700">
+          {t('loginLink')}
+        </Link>
+      </p>
+    </AuthLayout>
   )
 }

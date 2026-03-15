@@ -49,7 +49,7 @@ describe('LoginPage 렌더링', () => {
   it('헤더, 제목, 이메일/비밀번호 필드, 로그인 버튼, 회원가입 링크가 표시된다', () => {
     renderLoginPage()
 
-    expect(screen.getByText('my_todolist')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'my_todolist2' })).toBeInTheDocument()
     expect(screen.getByText('Team CalTalk | 학생 일정 관리')).toBeInTheDocument()
     expect(screen.getByRole('heading', { name: '로그인' })).toBeInTheDocument()
     expect(screen.getByLabelText('이메일')).toBeInTheDocument()
